@@ -2,20 +2,24 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ListingResource\Pages;
-use App\Filament\Resources\ListingResource\RelationManagers;
-use App\Models\Listing;
 use Filament\Forms;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Table;
+use App\Models\Listing;
 use Filament\Forms\Set;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\ListingResource\Pages;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ListingResource\RelationManagers;
+use Filament\Tables\Filters\TrashedFilter;
 
 class ListingResource extends Resource
 {
@@ -27,41 +31,41 @@ class ListingResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')->required()->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))->live(debounce: 250),
-                Forms\Components\TextInput::make('slug')->disabled(),
-                Forms\Components\Textarea::make('description')->required(),
-                Forms\Components\TextInput::make('address')
+                TextInput::make('title')->required()->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))->live(debounce: 250),
+                TextInput::make('slug')->disabled(),
+                Textarea::make('description')->required(),
+                TextInput::make('address')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('sqft')
+                TextInput::make('sqft')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('wifi_speed')
+                TextInput::make('wifi_speed')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('max_person')
+                TextInput::make('max_person')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('price_per_day')
+                TextInput::make('price_per_day')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('full_suppport_available')
+                TextInput::make('full_suppport_available')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('gym_area_available')
+                TextInput::make('gym_area_available')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('mini_cafe_available')
+                TextInput::make('mini_cafe_available')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('cinema_available')
+                TextInput::make('cinema_available')
                     ->required()
                     ->numeric()
                     ->default(0),
@@ -77,19 +81,18 @@ class ListingResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')->weight(FontWeight::Bold),
-                Tables\Columns\TextColumn::make('sqft'),
-                Tables\Columns\TextColumn::make('wifi_speed'),
-                Tables\Columns\TextColumn::make('max_person'),
-                Tables\Columns\TextColumn::make('price_per_day')->weight(FontWeight::Bold)->money('USD')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('title')->weight(FontWeight::Bold)->sortable()->isSearchable(),
+                TextColumn::make('sqft'),
+                TextColumn::make('wifi_speed'),
+                TextColumn::make('max_person'),
+                TextColumn::make('price_per_day')->weight(FontWeight::Bold)->format(fn ($value) => 'Rp' . number_format($value, 0, ',', '.'))->sortable(),
+                TextColumn::make('created_at')
                     ->dateTime(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make(),
