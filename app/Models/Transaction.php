@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends Model
@@ -35,5 +36,17 @@ class Transaction extends Model
         $this->attributes['total_price'] = $totalPrice + $fee;
         $this->attributes['fee'] = $fee;
         $this->attributes['listing_id'] = $value;
+    }
+
+    // RELASI KE TABEL USER
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // RELASI KE TABEL LISTING
+    public function listing(): BelongsTo
+    {
+        return $this->belongsTo(Listing::class);
     }
 }
