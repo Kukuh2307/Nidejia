@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
 
 class TransactionResource extends Resource
 {
@@ -47,24 +49,46 @@ class TransactionResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'waiting' => 'gray',
-                        'approved' => 'info',
-                        'canceled' => 'danger',
+                        'pending' => 'gray',
+                        'accepted' => 'info',
+                        'rejected' => 'danger',
                         default => 'gray',
                     })
             ])
             ->filters([
                 SelectFilter::make('status')
                     ->options([
-                        'waiting' => 'Waiting',
-                        'approved' => 'Approved',
-                        'canceled' => 'Canceled',
+                        'pending' => 'pending',
+                        'accepted' => 'accepted',
+                        'rejected' => 'rejected',
                     ])
                     ->attribute('status')
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Action::make('accept')
+                    ->button()
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->action(function (Transaction $transaction) {
+                        $transaction->update(['status' => 'accepted']);
+                        Notification::make()->success()->title('Transaction Accepted')->body('Your transaction has been accepted.')->icon('heroicon-o-check-circle')->send();
+                    })
+                    ->hidden(function (Transaction $transaction) {
+                        return $transaction->status !== 'pending';
+                    }),
+                Action::make('reject')
+                    ->button()
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(function (Transaction $transaction) {
+                        $transaction->update(['status' => 'rejected']);
+                        Notification::make()->success()->title('Transaction Rejected')->body('Your transaction has been rejected.')->icon('heroicon-o-x-circle')->send();
+                    })
+                    ->hidden(function (Transaction $transaction) {
+                        return $transaction->status !== 'pending';
+                    })
             ])
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
