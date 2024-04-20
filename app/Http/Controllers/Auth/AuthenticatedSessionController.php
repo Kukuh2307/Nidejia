@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Auth\LoginRequest;
+use Laravel\Passport\HasApiTokens;
+
 
 class AuthenticatedSessionController extends Controller
 {
@@ -21,7 +23,8 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
-        $user['token'] = $user->createToken('auth')->plainTextToken;
+        // $user->tokens()->delete();
+        $user['token'] = $request->user()->createToken('auth')->plainTextToken;
 
         return response()->json([
             'success' => true,
