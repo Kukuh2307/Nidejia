@@ -34,7 +34,7 @@ class Listing extends Model
     }
 
     // Relasi ke table transsaction (One To Many)
-    public function transsaction(): HasMany
+    public function transaction(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
