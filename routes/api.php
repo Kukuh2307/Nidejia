@@ -12,6 +12,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     ]);
 });
 
-// fungsi index yang di ambil dari route api listing controller 
-Route::resource('listing', ListingController::class)->only(['index']);
+// fungsi index dan show yang di ambil dari route api listing controller 
+Route::resource('listing', ListingController::class)->only(['index', 'show']);
+
 require __DIR__ . '/auth.php';

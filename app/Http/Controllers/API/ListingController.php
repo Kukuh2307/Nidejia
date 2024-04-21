@@ -12,12 +12,24 @@ class ListingController extends Controller
 {
     public function index(): JsonResponse
     {
+        // mengambil fungsi transaksi dari model listing untuk menghitung total transaksi terbanyak lalu di kirim ke api route
         $listings = ModelsListing::withCount('transaction')->orderBy('transaction_count', 'desc')->paginate();
 
         return response()->json([
             'data' => $listings,
             'success' => true,
             'message' => 'List of listings'
+        ]);
+    }
+
+
+    // mengambil detail listing
+    public function show(ModelsListing $listing): JsonResponse
+    {
+        return response()->json([
+            'data' => $listing,
+            'success' => true,
+            'message' => 'Detail of listing'
         ]);
     }
 }
