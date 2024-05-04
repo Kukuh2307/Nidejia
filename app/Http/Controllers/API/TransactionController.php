@@ -83,4 +83,20 @@ class TransactionController extends Controller
             'data' => $transaction
         ]);
     }
+
+    public function show(Transaction $transaction): JsonResponse
+    {
+        if ($transaction->user_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction not found',
+            ], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+        $transaction->Listing;
+        return response()->json([
+            'success' => true,
+            'message' => 'Get Detail of transaction',
+            'data' => $transaction
+        ]);
+    }
 }
