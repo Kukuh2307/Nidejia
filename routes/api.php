@@ -19,4 +19,7 @@ Route::resource('listing', ListingController::class)->only(['index', 'show']);
 // route mengecek transaksi available
 Route::post('transaction/is-available', [TransactionController::class, 'isAvailable'])->middleware('auth:sanctum');
 
+// route transaksi
+Route::resource('transaction', TransactionController::class)->only(['store'])->middleware('auth:sanctum');
+
 require __DIR__ . '/auth.php';
