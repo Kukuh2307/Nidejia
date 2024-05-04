@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Transaction\Store;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class TransactionController extends Controller
@@ -41,5 +42,15 @@ class TransactionController extends Controller
         }
 
         return true;
+    }
+
+    public function isAvailable(Store $request)
+    {
+        $this->_fullyBookedChecker($request);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Listing is ready to book',
+        ]);
     }
 }
